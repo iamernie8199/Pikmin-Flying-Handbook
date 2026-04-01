@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+
+# Scripts (只保留網站核心檔案)
+analyze.py
+merge_json.py
+clean_json.py
+json_stat.py
+api.py
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
