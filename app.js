@@ -128,9 +128,20 @@ function setupPostcardFilters() {
   const tabs = document.querySelectorAll('.filter-tab');
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
+      const isAlreadyActive = tab.classList.contains('active');
+      const filterType = tab.dataset.filter;
+      
+      // 移除所有分頁的 active 狀態
       tabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      renderChips(tab.dataset.filter);
+      
+      if (isAlreadyActive && filterType !== 'all') {
+        // 如果點擊的是已顯示的分頁（且不是"全部"），則收合標籤列表
+        renderChips('all');
+      } else {
+        // 否則顯示對應標籤
+        tab.classList.add('active');
+        renderChips(filterType);
+      }
     });
   });
   renderChips('all');
@@ -140,6 +151,7 @@ function renderChips(filterType) {
   const container = document.getElementById('filter-chips-container');
   container.innerHTML = '';
   if (filterType === 'all') return;
+
   let entries = [];
   if (filterType === 'type') {
     const counter = countBy(allItems, i => i.postcardType);
@@ -156,6 +168,20 @@ function renderChips(filterType) {
     allItems.forEach(i => (i.tags || []).forEach(t => { counter[t] = (counter[t] || 0) + 1; }));
     entries = Object.entries(counter).sort((a, b) => b[1] - a[1]).map(([k, v]) => ({ key: k, label: `${k} (${v})`, dim: 'tag' }));
   }
+
+  // 增加一個「收起」按鈕在標籤列表的最前方（僅限手機端或方便使用者）
+  const closeChip = document.createElement('button');
+  closeChip.className = 'chip';
+  closeChip.style.borderColor = 'var(--accent-color)';
+  closeChip.style.color = 'var(--accent-color)';
+  closeChip.innerHTML = '✕ 收起列表';
+  closeChip.onclick = () => {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('.filter-tab[data-filter="all"]').classList.add('active');
+    renderChips('all');
+  };
+  container.appendChild(closeChip);
+
   entries.forEach(({ key, label, dim }) => {
     const chip = document.createElement('button');
     chip.className = 'chip' + (activeFilters[dim] === key ? ' active' : '');
@@ -268,11 +294,14 @@ function renderSpotCategoryChips() {
   container.innerHTML = '';
   const counter = countBy(allSpots, s => s.category);
   const sortedCats = Object.entries(counter).sort((a, b) => b[1] - a[1]);
+  
+  // 純點也有收合機制，點擊「全部」即可收合，或增加一個明確的收起按鈕
   const allChip = document.createElement('button');
   allChip.className = 'chip' + (activeSpotCategory === null ? ' active' : '');
   allChip.textContent = `全部 (${allSpots.length})`;
   allChip.onclick = () => { activeSpotCategory = null; document.querySelectorAll('#spot-category-chips .chip').forEach(c => c.classList.remove('active')); allChip.classList.add('active'); applySpotFilters(); };
   container.appendChild(allChip);
+
   sortedCats.forEach(([cat, count]) => {
     const chip = document.createElement('button');
     chip.className = 'chip' + (activeSpotCategory === cat ? ' active' : '');
@@ -347,9 +376,6 @@ function copyGPS(coordStr, btn) {
     setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = originalContent; }, 2000);
   });
 }
-
-function closeModalDirect() { document.getElementById('modal-overlay').classList.remove('active'); document.body.style.overflow = ''; }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDirect(); });
 
 function setupBackToTop() { const btn = document.getElementById('back-to-top'); window.addEventListener('scroll', () => btn.classList.toggle('visible', window.scrollY > 500)); }
 function countBy(arr, keyFn) { const counter = {}; arr.forEach(item => { const k = keyFn(item) || 'Unknown'; counter[k] = (counter[k] || 0) + 1; }); return counter; }
