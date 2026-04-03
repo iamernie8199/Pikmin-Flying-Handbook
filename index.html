@@ -28,45 +28,15 @@
 
     <!-- Postcard View -->
     <div id="postcard-view" class="view-section active-view">
-        <!-- Hero Section -->
-        <header id="hero" class="hero">
-            <div class="hero-bg-shapes">
-                <div class="shape shape-1"></div>
-                <div class="shape shape-2"></div>
-                <div class="shape shape-3"></div>
-                <div class="shape shape-4"></div>
-                <div class="shape shape-5"></div>
-            </div>
-            <div class="hero-content">
-                <div class="hero-badge">🌍 來自全球 82 個國家</div>
-                <h1 class="hero-title">
-                    <span class="title-line">Pikmin</span>
-                    <span class="title-line accent">明信片圖鑑</span>
-                </h1>
-                <p class="hero-subtitle">探索 979 張來自世界各地的 Pikmin Bloom 明信片</p>
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <span class="stat-number" id="stat-total">979</span>
-                        <span class="stat-label">張明信片</span>
-                    </div>
-                    <div class="stat-divider"></div>
-                    <div class="stat-item">
-                        <span class="stat-number">82</span>
-                        <span class="stat-label">個國家</span>
-                    </div>
-                    <div class="stat-divider"></div>
-                    <div class="stat-item">
-                        <span class="stat-number">29</span>
-                        <span class="stat-label">種分類</span>
-                    </div>
+        <header class="view-header">
+            <div class="container">
+                <h1 class="view-title">Pikmin 明信片圖鑑</h1>
+                <p class="view-subtitle">探索來自全球 82 個國家、979 張精彩明信片</p>
+                <div class="view-stats-summary">
+                    <span>🖼️ 979 張</span>
+                    <span>🌍 82 國</span>
+                    <span>📁 29 分類</span>
                 </div>
-                <button class="hero-cta" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">
-                    開始探索
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
-                </button>
-            </div>
-            <div class="hero-scroll-indicator">
-                <div class="scroll-dot"></div>
             </div>
         </header>
 
