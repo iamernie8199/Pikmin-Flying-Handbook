@@ -67,9 +67,9 @@ body {
 
 /* --- Controls Section --- */
 .controls-section {
-  padding: 4rem 0 2rem;
+  padding: 1rem 0 1rem;
   position: sticky;
-  top: 0;
+  top: 60px; /* Below fixed nav */
   z-index: 100;
   background: var(--bg-color);
 }
@@ -77,7 +77,7 @@ body {
 .search-wrapper {
   position: relative;
   max-width: 800px;
-  margin: 0 auto 2.5rem;
+  margin: 0 auto 1.5rem;
 }
 
 .search-icon {
@@ -108,7 +108,7 @@ body {
 }
 
 .filter-tabs-wrapper {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   display: flex;
   justify-content: center;
 }
@@ -154,7 +154,7 @@ body {
   flex-wrap: wrap;
   gap: 0.6rem;
   justify-content: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   min-height: 42px;
 }
 
