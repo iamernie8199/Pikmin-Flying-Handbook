@@ -9,6 +9,7 @@ analyze.py
 merge_json.py
 clean_json.py
 json_stat.py
+pure.py
 api.py
 
 # OS
