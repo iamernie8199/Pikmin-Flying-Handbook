@@ -78,15 +78,6 @@
                 <!-- Results Count & Sort -->
                 <div class="results-bar">
                     <span class="results-count" id="results-count">顯示 0 張明信片</span>
-                    <div class="sort-wrapper">
-                        <label for="sort-select">排序：</label>
-                        <select id="sort-select" class="sort-select">
-                            <option value="default">預設</option>
-                            <option value="title-asc">名稱 A→Z</option>
-                            <option value="title-desc">名稱 Z→A</option>
-                            <option value="country-asc">國家 A→Z</option>
-                        </select>
-                    </div>
                 </div>
             </div>
         </section>
@@ -135,6 +126,11 @@
 
                 <div class="results-bar">
                     <span class="results-count" id="spot-results-count">顯示 0 個純點</span>
+                    <select id="spot-sort-select" class="sort-select">
+                        <option value="default">排序：預設</option>
+                        <option value="north-to-south">由北到南 (↑N → ↓S)</option>
+                        <option value="south-to-north">由南到北 (↓S → ↑N)</option>
+                    </select>
                 </div>
             </div>
         </section>
