@@ -67,44 +67,7 @@ const CATEGORY_LABELS = {
 };
 
 // ===== SPOT CONFIG (Pure Spots) =====
-const SPOT_CATEGORY_LABELS = {
-  movie: '🎬 電影院',
-  laundry: '🧺 洗衣店',
-  park: '🌳 公園',
-  restaurant: '🍴 餐廳',
-  minimart: '🏪 便利商店',
-  station: '🚉 車站',
-  bus: '🚌 公車站',
-  ramen: '🍜 拉麵店',
-  sweetshop: '🍰 甜點店',
-  bridge: '🌉 橋樑',
-  hotel: '🏨 飯店',
-  forest: '🌲 森林',
-  curry: '🍛 咖哩店',
-  waterside: '💧 水邊',
-  electronics: '🔌 電器行',
-  hairsalon: '✂️ 理髮廳',
-  sushi: '🍣 壽司店',
-  italian: '🍝 義大利餐廳',
-  cafe: '☕ 咖啡廳',
-  roadside: '🚦 路邊',
-  university: '🎓 大學',
-  library: '📖 圖書館',
-  pharmacy: '💊 藥局',
-  postoffice: '📮 郵局',
-  supermarket: '🛒 超市',
-  clothesstore: '👕 服飾店',
-  airport: '✈️ 機場',
-  zoo: '🦁 動物園',
-  museum: '🏛️ 博物館',
-  bakery: '🥖 麵包店',
-  artgallery: '🎨 美術館',
-  cinema: '📽️ 電影院',
-  burger: '🍔 漢堡店',
-  bookstore: '📚 書店',
-  mountain: '⛰️ 山頂',
-  beach: '🏖️ 海灘',
-};
+const SPOT_CATEGORY_LABELS = { movie: '🎬 電影院', laundry: '🧺 洗衣店', park: '🌳 公園', restaurant: '🍴 餐廳', minimart: '🏪 便利商店', station: '🚉 車站', bus: '🚌 公車站', ramen: '🍜 拉麵店', sweetshop: '🍰 甜點店', bridge: '🌉 橋樑', hotel: '🏨 飯店', forest: '🌲 森林', curry: '🍛 咖哩店', waterside: '💧 水邊', electronics: '🔌 電器行', hairsalon: '✂️ 理髮廳', sushi: '🍣 壽司店', italian: '🍝 義大利餐廳', cafe: '☕ 咖啡廳', roadside: '🚦 路邊', university: '🎓 大學', library: '📖 圖書館', pharmacy: '💊 藥局', postoffice: '📮 郵局', supermarket: '🛒 超市', clothesstore: '👕 服飾店', airport: '✈️ 機場', zoo: '🦁 動物園', museum: '🏛️ 博物館', bakery: '🥖 麵包店', artgallery: '🎨 美術館', cinema: '📽️ 電影院', burger: '🍔 漢堡店', bookstore: '📚 書店', mountain: '⛰️ 山頂', beach: '🏖️ 海灘' };
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', async () => {
@@ -114,26 +77,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupSpotSearch();
   setupSpotSort();
   setupBackToTop();
-  
   applyFilters();
   applySpotFilters();
 });
 
 async function loadData() {
   try {
-    const [postcardRes, spotRes] = await Promise.all([
-      fetch('merged_data.json'),
-      fetch('pure.json')
-    ]);
-    
+    const [postcardRes, spotRes] = await Promise.all([fetch('merged_data.json'), fetch('pure.json')]);
     const postcardJson = await postcardRes.json();
     allItems = postcardJson.items || [];
     filteredItems = [...allItems];
-    
     const spotJson = await spotRes.json();
     allSpots = spotJson.spots || [];
     filteredSpots = [...allSpots];
-    
     renderSpotCategoryChips();
   } catch (e) {
     console.error('Failed to load data:', e);
@@ -259,17 +215,32 @@ function createCard(item, idx) {
   const card = document.createElement('div');
   card.className = 'card';
   card.style.animationDelay = `${(idx % PAGE_SIZE) * 0.03}s`;
+  
   const typeColor = TYPE_COLORS[item.postcardType] || '#94a3b8';
   const typeLabel = TYPE_LABELS[item.postcardType] || item.postcardType;
   const locationStr = item.placeName || [item.city, item.country].filter(Boolean).join(', ') || '未知地點';
+  const coordStr = (item.latitude != null && item.longitude != null) 
+    ? `${Number(item.latitude).toFixed(6)}, ${Number(item.longitude).toFixed(6)}` 
+    : '';
+
   card.innerHTML = `
     <div class="card-image-wrapper">
       <img class="card-image" src="${item.displayImageUrl || item.imageUrl || ''}" alt="${escapeHtml(item.title || '')}" loading="lazy">
       <span class="card-type-badge" style="border:1px solid ${typeColor}; color:${typeColor}; font-weight:700;">${typeLabel}</span>
     </div>
-    <div class="card-body"><h3 class="card-title">${escapeHtml(item.title || '（無標題）')}</h3><p class="card-location">📍 ${escapeHtml(locationStr)}</p></div>
+    <div class="card-body">
+      <h3 class="card-title">${escapeHtml(item.title || '（無標題）')}</h3>
+      <p class="card-location">📍 ${escapeHtml(locationStr)}</p>
+      <div class="card-footer" style="margin-top: 1rem; display: flex; justify-content: flex-end;">
+        ${coordStr ? `
+          <button class="copy-spot-btn" onclick="copyGPS('${coordStr}', this)" style="width: 100%;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            複製座標
+          </button>
+        ` : `<span style="font-size: 0.8rem; color: var(--text-muted);">無座標資料</span>`}
+      </div>
+    </div>
   `;
-  card.addEventListener('click', () => openModal(item));
   return card;
 }
 
@@ -289,10 +260,7 @@ function setupSpotSearch() {
 function setupSpotSort() {
   const select = document.getElementById('spot-sort-select');
   if (!select) return;
-  select.addEventListener('change', e => {
-    spotSortMode = e.target.value;
-    applySpotFilters();
-  });
+  select.addEventListener('change', e => { spotSortMode = e.target.value; applySpotFilters(); });
 }
 
 function renderSpotCategoryChips() {
@@ -303,12 +271,7 @@ function renderSpotCategoryChips() {
   const allChip = document.createElement('button');
   allChip.className = 'chip' + (activeSpotCategory === null ? ' active' : '');
   allChip.textContent = `全部 (${allSpots.length})`;
-  allChip.onclick = () => {
-    activeSpotCategory = null;
-    document.querySelectorAll('#spot-category-chips .chip').forEach(c => c.classList.remove('active'));
-    allChip.classList.add('active');
-    applySpotFilters();
-  };
+  allChip.onclick = () => { activeSpotCategory = null; document.querySelectorAll('#spot-category-chips .chip').forEach(c => c.classList.remove('active')); allChip.classList.add('active'); applySpotFilters(); };
   container.appendChild(allChip);
   sortedCats.forEach(([cat, count]) => {
     const chip = document.createElement('button');
@@ -327,21 +290,13 @@ function applySpotFilters() {
   let result = allSpots.filter(spot => {
     if (activeSpotCategory && spot.category !== activeSpotCategory) return false;
     if (spotSearchQuery) {
-      const name = (spot.name || '').toLowerCase();
-      const addr = (spot.address || '').toLowerCase();
-      const rgn = (spot.region || '').toLowerCase();
-      const cat = (spot.category || '').toLowerCase();
-      if (!name.includes(spotSearchQuery) && !addr.includes(spotSearchQuery) && !rgn.includes(spotSearchQuery) && !cat.includes(spotSearchQuery)) return false;
+      const s = spotSearchQuery;
+      return [spot.name, spot.address, spot.region, spot.category].some(v => (v || '').toLowerCase().includes(s));
     }
     return true;
   });
-  
-  if (spotSortMode === 'north-to-south') {
-    result.sort((a, b) => (Number(b.lat) || 0) - (Number(a.lat) || 0));
-  } else if (spotSortMode === 'south-to-north') {
-    result.sort((a, b) => (Number(a.lat) || 0) - (Number(b.lat) || 0));
-  }
-  
+  if (spotSortMode === 'north-to-south') result.sort((a, b) => (Number(b.lat) || 0) - (Number(a.lat) || 0));
+  else if (spotSortMode === 'south-to-north') result.sort((a, b) => (Number(a.lat) || 0) - (Number(b.lat) || 0));
   filteredSpots = result;
   displayedSpotCount = 0;
   const grid = document.getElementById('spot-grid');
@@ -353,7 +308,6 @@ function renderSpots() {
   const grid = document.getElementById('spot-grid');
   const loadMoreWrapper = document.getElementById('spot-load-more-wrapper');
   if (!grid) return;
-  
   if (filteredSpots.length === 0) {
     document.getElementById('spot-no-results').classList.remove('hidden');
     if (loadMoreWrapper) loadMoreWrapper.classList.add('hidden');
@@ -392,26 +346,6 @@ function copyGPS(coordStr, btn) {
     btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 已複製`;
     setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = originalContent; }, 2000);
   });
-}
-
-function openModal(item) {
-  const typeColor = TYPE_COLORS[item.postcardType] || '#94a3b8';
-  document.getElementById('modal-image').src = item.displayImageUrl || item.imageUrl || '';
-  document.getElementById('modal-title').textContent = item.title || '（無標題）';
-  const typeEl = document.getElementById('modal-type');
-  typeEl.textContent = TYPE_LABELS[item.postcardType] || item.postcardType;
-  typeEl.style.background = hexAlpha(typeColor, 0.2);
-  typeEl.style.color = typeColor;
-  const locParts = [item.placeName, item.city, item.state, item.country].filter(Boolean);
-  document.getElementById('modal-location').textContent = '📍 ' + (locParts.join('、') || '未知地點');
-  document.getElementById('modal-categories').innerHTML = (item.categories || []).map(c => `<span>${CATEGORY_LABELS[c] || c}</span>`).join('');
-  document.getElementById('modal-tags').innerHTML = (item.tags || []).map(t => `<span>#${t}</span>`).join('');
-  if (item.latitude != null && item.longitude != null) {
-    const lat = Number(item.latitude).toFixed(6); const lng = Number(item.longitude).toFixed(6); const coordStr = `${lat}, ${lng}`;
-    document.getElementById('modal-coords').innerHTML = `<div class="coords-box" style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 12px; margin-top: 1rem;"><div style="font-size: 0.8rem; margin-bottom: 0.5rem; color: #94a3b8;">GPS 座標</div><div style="display: flex; justify-content: space-between; align-items: center;"><code style="font-family: inherit; font-weight: 600;">${coordStr}</code><button class="copy-coords-btn" onclick="copyGPS('${coordStr}', this)" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 0.3rem 0.6rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">複製</button></div></div>`;
-  } else { document.getElementById('modal-coords').innerHTML = ''; }
-  document.getElementById('modal-overlay').classList.add('active');
-  document.body.style.overflow = 'hidden';
 }
 
 function closeModalDirect() { document.getElementById('modal-overlay').classList.remove('active'); document.body.style.overflow = ''; }
