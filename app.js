@@ -287,7 +287,9 @@ function setupSpotSearch() {
 }
 
 function setupSpotSort() {
-  document.getElementById('spot-sort-select').addEventListener('change', e => {
+  const select = document.getElementById('spot-sort-select');
+  if (!select) return;
+  select.addEventListener('change', e => {
     spotSortMode = e.target.value;
     applySpotFilters();
   });
@@ -325,26 +327,36 @@ function applySpotFilters() {
   let result = allSpots.filter(spot => {
     if (activeSpotCategory && spot.category !== activeSpotCategory) return false;
     if (spotSearchQuery) {
-      if (![spot.name, spot.address, spot.region, spot.category].join(' ').toLowerCase().includes(spotSearchQuery)) return false;
+      const name = (spot.name || '').toLowerCase();
+      const addr = (spot.address || '').toLowerCase();
+      const rgn = (spot.region || '').toLowerCase();
+      const cat = (spot.category || '').toLowerCase();
+      if (!name.includes(spotSearchQuery) && !addr.includes(spotSearchQuery) && !rgn.includes(spotSearchQuery) && !cat.includes(spotSearchQuery)) return false;
     }
     return true;
   });
   
-  if (spotSortMode === 'north-to-south') result.sort((a, b) => b.lat - a.lat);
-  else if (spotSortMode === 'south-to-north') result.sort((a, b) => a.lat - b.lat);
+  if (spotSortMode === 'north-to-south') {
+    result.sort((a, b) => (Number(b.lat) || 0) - (Number(a.lat) || 0));
+  } else if (spotSortMode === 'south-to-north') {
+    result.sort((a, b) => (Number(a.lat) || 0) - (Number(b.lat) || 0));
+  }
   
   filteredSpots = result;
   displayedSpotCount = 0;
-  document.getElementById('spot-grid').innerHTML = '';
+  const grid = document.getElementById('spot-grid');
+  if (grid) grid.innerHTML = '';
   renderSpots();
 }
 
 function renderSpots() {
   const grid = document.getElementById('spot-grid');
   const loadMoreWrapper = document.getElementById('spot-load-more-wrapper');
+  if (!grid) return;
+  
   if (filteredSpots.length === 0) {
     document.getElementById('spot-no-results').classList.remove('hidden');
-    loadMoreWrapper.classList.add('hidden');
+    if (loadMoreWrapper) loadMoreWrapper.classList.add('hidden');
     document.getElementById('spot-results-count').textContent = '顯示 0 個純點';
     return;
   }
@@ -353,7 +365,7 @@ function renderSpots() {
   slice.forEach((spot, idx) => grid.appendChild(createSpotCard(spot, (displayedSpotCount + idx))));
   displayedSpotCount += slice.length;
   document.getElementById('spot-results-count').textContent = `顯示 ${displayedSpotCount} / ${filteredSpots.length} 個純點`;
-  loadMoreWrapper.classList.toggle('hidden', displayedSpotCount >= filteredSpots.length);
+  if (loadMoreWrapper) loadMoreWrapper.classList.toggle('hidden', displayedSpotCount >= filteredSpots.length);
 }
 
 function createSpotCard(spot, idx) {
@@ -361,7 +373,7 @@ function createSpotCard(spot, idx) {
   card.className = 'spot-card';
   card.style.animation = `fadeInUp 0.5s ease forwards ${ (idx % SPOT_PAGE_SIZE) * 0.05 }s`;
   const categoryLabel = SPOT_CATEGORY_LABELS[spot.category] || spot.category;
-  const coordStr = `${spot.lat.toFixed(6)}, ${spot.lng.toFixed(6)}`;
+  const coordStr = `${Number(spot.lat).toFixed(6)}, ${Number(spot.lng).toFixed(6)}`;
   card.innerHTML = `
     <div class="spot-card-header"><span class="spot-category-badge">${categoryLabel}</span><span class="spot-status"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> ${spot.status === 'verified' ? '已驗證' : spot.status}</span></div>
     <div class="spot-name">${escapeHtml(spot.name || '未命名純點')}</div>
@@ -395,7 +407,7 @@ function openModal(item) {
   document.getElementById('modal-categories').innerHTML = (item.categories || []).map(c => `<span>${CATEGORY_LABELS[c] || c}</span>`).join('');
   document.getElementById('modal-tags').innerHTML = (item.tags || []).map(t => `<span>#${t}</span>`).join('');
   if (item.latitude != null && item.longitude != null) {
-    const lat = item.latitude.toFixed(6); const lng = item.longitude.toFixed(6); const coordStr = `${lat}, ${lng}`;
+    const lat = Number(item.latitude).toFixed(6); const lng = Number(item.longitude).toFixed(6); const coordStr = `${lat}, ${lng}`;
     document.getElementById('modal-coords').innerHTML = `<div class="coords-box" style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 12px; margin-top: 1rem;"><div style="font-size: 0.8rem; margin-bottom: 0.5rem; color: #94a3b8;">GPS 座標</div><div style="display: flex; justify-content: space-between; align-items: center;"><code style="font-family: inherit; font-weight: 600;">${coordStr}</code><button class="copy-coords-btn" onclick="copyGPS('${coordStr}', this)" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 0.3rem 0.6rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">複製</button></div></div>`;
   } else { document.getElementById('modal-coords').innerHTML = ''; }
   document.getElementById('modal-overlay').classList.add('active');
