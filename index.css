@@ -705,8 +705,9 @@ body {
   .nav-container { padding: 0 1rem; }
   .container { padding: 0 1rem; }
 
-  /* 純點搜尋 — 分類晶片改為橫向單行可滾動，避免縱向堆疊佔滿手機螢幕 */
-  #pure-spot-view #spot-category-chips {
+  /* 明信片 & 純點搜尋 — 篩選晶片改為橫向單行可滾動，避免縱向堆疊佔滿手機螢幕 */
+  #filter-chips-container,
+  #spot-category-chips {
     flex-wrap: nowrap;
     overflow-x: auto;
     overflow-y: hidden;
@@ -715,7 +716,8 @@ body {
     scrollbar-width: none;
   }
 
-  #pure-spot-view #spot-category-chips::-webkit-scrollbar {
+  #filter-chips-container::-webkit-scrollbar,
+  #spot-category-chips::-webkit-scrollbar {
     display: none;
   }
 
