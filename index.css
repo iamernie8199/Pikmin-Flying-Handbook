@@ -51,7 +51,7 @@ body {
 }
 
 .view-header {
-  padding: 2rem 0 1rem;
+  padding: 1rem 0 0.5rem;
   text-align: center;
 }
 
@@ -530,7 +530,7 @@ body {
 
 /* --- View Header (Pure Spot) --- */
 .view-header {
-  padding: 6rem 0 2rem;
+  padding: 2rem 0 1rem;
   text-align: center;
 }
 
