@@ -704,4 +704,43 @@ body {
   .nav-link { padding: 0.5rem 0.8rem; font-size: 0.85rem; }
   .nav-container { padding: 0 1rem; }
   .container { padding: 0 1rem; }
+
+  /* 純點搜尋 — 手機橫向卷軸 */
+  #pure-spot-view .gallery-section .container {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .spot-grid {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: visible;
+    gap: 1rem;
+    padding: 0.5rem 1rem 1rem;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(99, 102, 241, 0.5) transparent;
+  }
+
+  .spot-grid::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .spot-grid::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .spot-grid::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.5);
+    border-radius: 99px;
+  }
+
+  .spot-card {
+    min-width: 280px;
+    max-width: 85vw;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
 }
